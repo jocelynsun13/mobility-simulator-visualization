@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>Visualization app</title>
+
+  <script src="https://code.jquery.com/jquery-1.12.1.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/queue-async/1.0.7/queue.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/leaflet.js"></script>
+  <script src="src/L.CanvasOverlay.js"></script>
+  <script src="src/L.D3SvgOverlay.min.js"></script>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/leaflet.css" />
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+
+  <link rel="stylesheet" type="text/css" href="src/style.css">
+
+<body>
+
+  <div id="map"></div>
+
+  <div id="time">
+    <div id="current-time">
+      <select class="form-control current-time" id="hour">
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3" selected="true">3</option>
+        <option value="4">4</option>
+        <option value="5">5</option>
+        <option value="6">6</option>
+        <option value="7">7</option>
+        <option value="8">8</option>
+        <option value="9">9</option>
+        <option value="10">10</option>
+        <option value="11">11</option>
+        <option value="12">12</option>
+      </select>
+      <select class="form-control current-time" id="minute">
+        <option value="0">00</option>
+        <option value="1">01</option>
+        <option value="2">02</option>
+        <option value="3">03</option>
+        <option value="4">04</option>
+        <option value="5">05</option>
+        <option value="6">06</option>
+        <option value="7">07</option>
+        <option value="8">08</option>
+        <option value="9">09</option>
+        <option value="10">10</option>
+        <option value="11">11</option>
+        <option value="12">12</option>
+        <option value="13">13</option>
+        <option value="14">14</option>
+        <option value="15">15</option>
+        <option value="16">16</option>
+        <option value="17">17</option>
+        <option value="18">18</option>
+        <option value="19">19</option>
+        <option value="20">20</option>
+        <option value="21">21</option>
+        <option value="22">22</option>
+        <option value="23">23</option>
+        <option value="24">24</option>
+        <option value="25">25</option>
+        <option value="26">26</option>
+        <option value="27">27</option>
+        <option value="28">28</option>
+        <option value="29">29</option>
+        <option value="30">30</option>
+        <option value="31">31</option>
+        <option value="32">32</option>
+        <option value="33">33</option>
+        <option value="34">34</option>
+        <option value="35">35</option>
+        <option value="36">36</option>
+        <option value="37">37</option>
+        <option value="38" selected="true">38</option>
+        <option value="39">39</option>
+        <option value="40">40</option>
+        <option value="41">41</option>
+        <option value="42">42</option>
+        <option value="43">43</option>
+        <option value="44">44</option>
+        <option value="45">45</option>
+        <option value="46">46</option>
+        <option value="47">47</option>
+        <option value="48">48</option>
+        <option value="49">49</option>
+        <option value="50">50</option>
+        <option value="51">51</option>
+        <option value="52">52</option>
+        <option value="53">53</option>
+        <option value="54">54</option>
+        <option value="55">55</option>
+        <option value="56">56</option>
+        <option value="57">57</option>
+        <option value="58">58</option>
+        <option value="59">59</option>
+      </select>
+      <select class="form-control current-time" id="period">
+        <option value="AM" selected="true">AM</option>
+        <option value="PM">PM</option>
+      </select>
+    </div>
+  </div>
+
+  <div id="running">
+    <button id="run" class="btn btn-small btn-default"><i class="fa fa-stop"></i></button>
+  </div>
+
+  <div id="speed">
+    <input id="speed-slider" orient="vertical" type="range" min="0" max="300" step="10" value="290"/>
+  </div>
+
+  <div id="blurb">
+     <a id = "user_id">User ID: </a><br/>
+     <a id = "user_status">User Status: </a><br/>
+     <a id = "user_utility">User Utility: </a>
+  </div>
+
+  <div id="map_type">
+    <select class="form-control current-map" id="map_selected">
+      <option value="street" selected="true">Street</option>
+      <option value="satellite">Satellite</option>
+    </select>
+  </div>
+
+  <div id="layer_type">
+    <select class="form-control current-layer" id="layer_selected">
+      <option value="all" selected="true">All vehicles</option>
+      <option value="bus">Bus</option>
+      <option value="cab">Cab</option>
+      <option value="car">Private Car</option>
+      <option value="user">User</option>
+    </select>
+  </div>
+
+  <div id = "legend">
+    <span class="dot_bus"></span>&nbsp Bus &nbsp
+    <span class="dot_car"></span>&nbsp Private car &nbsp <br>  
+    <span class="dot_cab"></span>&nbsp Cab &nbsp
+    <span class="dot_user"></span>&nbsp User &nbsp<br>
+  </div>
+
+  <div id="mySidenav" class="sidenav">
+    <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+    <h1>Cab Info</h1> <br><br>
+      <a id="cab_id">Cab ID: 021783</a> <br>
+      <a id="status">Status: busy</a> <br>
+      <a id="revenue">Revenue: $10</a> <br>
+      <a id="dist">Distance: 1 mile</a> <br>
+      <a id="cost">Cost: $0</a>
+  </div>
+
+  <script src="script.js"></script> <!-- main program-->
+  <script src="UI_Events.js"></script><!-- monitor UI events -->
+  <script src="functions.js"></script><!-- sub-functions -->
+  <script src="draw.js"></script><!-- draw function -->
